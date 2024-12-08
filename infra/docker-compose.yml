@@ -37,8 +37,11 @@ services:
     ports:
       - "9090:80"
     volumes:
-      - static:/static
-      - media:/app/media/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
+      - static_volume:/var/html/static/
+      - media_volume:/var/html/media/
     depends_on:
       - frontend
       - backend
