@@ -1,45 +1,28 @@
-version: '3.8'
-
-volumes:
-  pg_data:
-  static_volume:
-  media_volume:
-  data_volume:
-
-networks:
-  foodgram_network:
-    driver: bridge
-
+version: '3.3'
 services:
+
   db:
-    image: postgres:13.10
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ./init:/docker-entrypoint-initdb.d
-    networks:
-      - foodgram_network
 
   backend:
     image: brriff/foodgram_backend:latest
+    restart: always
     volumes:
-      - data_volume:/app/data/
-      - static_volume:/app/static/
-      - media_volume:/app/media/
-    env_file:
-      - ./.env
+      - static:/app/static/
+      - media:/app/media/
     depends_on:
       - db
-    networks:
-      - foodgram_network
+    env_file:
+      - ./.env
 
   frontend:
     image: brriff/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
-    networks:
-      - foodgram_network
 
   nginx:
     image: nginx:1.19.3
@@ -49,10 +32,14 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
-      - static_volume:/var/html/static/
-      - media_volume:/var/html/media/
+      - static:/var/html/static
+      - media:/var/html/media
+    restart: always
     depends_on:
-      - frontend
       - backend
-    networks:
-      - foodgram_network
+      - frontend
+
+volumes:
+  postgres_data:
+  static:
+  media:
