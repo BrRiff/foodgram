@@ -118,7 +118,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
         if len(ingredients_data) != len(set(ingredients_data)):
             raise serializers.ValidationError(
-                'Ингредиенты не должны повторяться.'
+                'Ингредиенты рецепта не должны повторяться'
             )
         for ingredient in ingredients:
             if int(ingredient.get('amount')) < 1:
@@ -134,7 +134,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     def validate_tags(self, tags):
         if len(tags) != len(set(tags)):
             raise serializers.ValidationError(
-                'Теги рецепта должны быть уникальными'
+                'Теги рецепта не должны повторяться'
             )
         return tags
 
@@ -184,7 +184,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Recipe
         fields = (
@@ -196,7 +195,6 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Favorite
         fields = '__all__'
@@ -204,13 +202,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Favorite.objects.all(),
                 fields=('user', 'recipe'),
-                message='Рецепт уже добавлен в избранное.'
+                message='Вы уже добавляли это рецепт в избранное'
             )
         ]
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ShoppingCart
         fields = '__all__'
@@ -218,6 +215,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=ShoppingCart.objects.all(),
                 fields=('user', 'recipe'),
-                message='Рецепт уже в корзине.'
+                message='Вы уже добавляли это рецепт в список покупок'
             )
         ]
