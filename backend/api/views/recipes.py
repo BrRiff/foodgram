@@ -29,8 +29,6 @@ from ..utils import create_shopping_cart
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """Вьюсет для создания обьектов класса Tag."""
-
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (permissions.AllowAny,)
@@ -38,8 +36,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """Вьюсет для создания обьектов класса Ingredient."""
-
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (permissions.AllowAny,)
@@ -50,8 +46,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """Вьюсет для создания обьектов класса Recipe."""
-
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (
@@ -68,7 +62,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def get_favorite(self, request, pk):
-        """Позволяет текущему пользователю добавлять рецепты в избранное."""
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
             serializer = FavoriteSerializer(
@@ -94,8 +87,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def get_shopping_cart(self, request, pk):
-        """Позволяет текущему пользователю добавлять рецепты
-        в список покупок."""
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
             serializer = ShoppingCartSerializer(
@@ -121,7 +112,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        """Позволяет текущему пользователю загрузить список покупок."""
         ingredients_cart = (
             IngredientAmount.objects.filter(
                 recipe__shopping_cart__user=request.user
@@ -135,8 +125,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return create_shopping_cart(ingredients_cart)
 
     def get_serializer_class(self):
-        """Определяет какой сериализатор будет использоваться
-        для разных типов запроса."""
         if self.request.method == 'GET':
             return RecipeGETSerializer
         return RecipeSerializer

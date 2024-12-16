@@ -6,8 +6,6 @@ from backend.settings import LENGTH_TEXT
 
 
 class User(AbstractUser):
-    """Класс пользователей."""
-
     email = models.EmailField(
         max_length=254,
         verbose_name='email',
@@ -59,8 +57,6 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
-    """Класс для подписки на авторов контента."""
-
     subscriber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

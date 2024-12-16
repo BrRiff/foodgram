@@ -8,7 +8,6 @@ from users.models import Subscription, User
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
-    """Сериализатор для создания объекта класса User."""
 
     class Meta:
         model = User
@@ -22,27 +21,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         )
         extra_kwargs = {"password": {"write_only": True}}
 
-    def validate(self, data):
-        """Запрещает пользователям присваивать себе username me
-        и использовать повторные username и email."""
-        if data.get('username') == 'me':
-            raise serializers.ValidationError(
-                'Использовать имя me запрещено'
-            )
-        if User.objects.filter(username=data.get('username')):
-            raise serializers.ValidationError(
-                'Пользователь с таким username уже существует'
-            )
-        if User.objects.filter(email=data.get('email')):
-            raise serializers.ValidationError(
-                'Пользователь с таким email уже существует'
-            )
-        return data
-
 
 class CustomUserSerializer(UserSerializer):
-    """Сериализатор для модели User."""
-
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -56,15 +36,7 @@ class CustomUserSerializer(UserSerializer):
             'is_subscribed'
         )
 
-    def validate(self, data):
-        """Запрещает пользователям изменять себе username на me."""
-        if data.get('username') == 'me':
-            raise serializers.ValidationError(
-                'Использовать имя me запрещено'
-            )
-
     def get_is_subscribed(self, object):
-        """Проверяет, подписан ли текущий пользователь на автора аккаунта."""
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -72,7 +44,6 @@ class CustomUserSerializer(UserSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели Subscription."""
 
     class Meta:
         model = Subscription
@@ -81,21 +52,19 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Subscription.objects.all(),
                 fields=('author', 'subscriber'),
-                message='Вы уже подписывались на этого автора'
+                message='Вы уже подписаны.'
             )
         ]
 
     def validate(self, data):
-        """Проверяем, что пользователь не подписывается на самого себя."""
         if data['subscriber'] == data['author']:
             raise serializers.ValidationError(
-                'Подписка на cамого себя не имеет смысла'
+                'Нельзя подписаться на самого себя.'
             )
         return data
 
 
 class SubscriptionRecipeShortSerializer(serializers.ModelSerializer):
-    """Сериализатор для отображения рецептов в подписке."""
 
     class Meta:
         model = Recipe
@@ -108,8 +77,6 @@ class SubscriptionRecipeShortSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionShowSerializer(CustomUserSerializer):
-    """Сериализатор отображения подписок."""
-
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 

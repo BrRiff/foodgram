@@ -7,8 +7,6 @@ from .models import Subscription, User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    """Класс настройки раздела пользователей."""
-
     list_display = (
         'pk',
         'username',
@@ -27,8 +25,6 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    """Класс настройки раздела подписок."""
-
     list_display = (
         'pk',
         'author',

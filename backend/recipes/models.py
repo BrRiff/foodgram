@@ -11,8 +11,6 @@ from users.models import User
 
 
 class Tag(models.Model):
-    """Класс тегов."""
-
     name = models.CharField(
         max_length=50,
         verbose_name='Hазвание',
@@ -46,8 +44,6 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    """Класс ингредиентов."""
-
     name = models.CharField(
         max_length=150,
         verbose_name='Hазвание',
@@ -68,8 +64,6 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    """Класс рецептов."""
-
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientAmount',
@@ -123,9 +117,6 @@ class Recipe(models.Model):
 
 
 class IngredientAmount(models.Model):
-    """Вспомогательный класс, связывающий рецепты и ингредиенты.
-    Доступно указание количества ингредиента."""
-
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
@@ -166,8 +157,6 @@ class IngredientAmount(models.Model):
 
 
 class Favorite(models.Model):
-    """Класс для добавления рецептов в избранное."""
-
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -197,8 +186,6 @@ class Favorite(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Класс для составления списка покупок."""
-
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

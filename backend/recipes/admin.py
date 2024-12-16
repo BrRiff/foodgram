@@ -14,8 +14,6 @@ from .models import (
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """Класс настройки раздела тегов."""
-
     list_display = (
         'pk',
         'name',
@@ -31,8 +29,6 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    """Класс настройки раздела ингредиентов."""
-
     list_display = (
         'pk',
         'name',
@@ -45,16 +41,12 @@ class IngredientAdmin(admin.ModelAdmin):
 
 
 class IngredientAmountInline(admin.TabularInline):
-    """Класс, позволяющий добавлять ингредиенты в рецепты."""
-
     model = IngredientAmount
     min_num = 1
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    """Класс настройки раздела рецептов."""
-
     list_display = (
         'pk',
         'name',
@@ -78,7 +70,6 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('author', 'name')
 
     def get_ingredients(self, object):
-        """Получает ингредиент или список ингредиентов рецепта."""
         return '\n'.join(
             (ingredient.name for ingredient in object.ingredients.all())
         )
@@ -86,13 +77,11 @@ class RecipeAdmin(admin.ModelAdmin):
     get_ingredients.short_description = 'ингредиенты'
 
     def get_tags(self, object):
-        """Получает тег или список тегов рецепта."""
         return '\n'.join((tag.name for tag in object.tags.all()))
 
     get_tags.short_description = 'теги'
 
     def count_favorite(self, object):
-        """Вычисляет количество добавлений рецепта в избранное."""
         return object.favoriting.count()
 
     count_favorite.short_description = 'Количество добавлений в избранное'
@@ -100,8 +89,6 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientAmount)
 class IngredientAmountAdmin(admin.ModelAdmin):
-    """Класс настройки соответствия игредиентов и рецептов."""
-
     list_display = (
         'pk',
         'ingredient',
@@ -114,8 +101,6 @@ class IngredientAmountAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    """Класс настройки раздела избранного."""
-
     list_display = (
         'pk',
         'user',
@@ -131,8 +116,6 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    """Класс настройки раздела рецептов, которые добавлены в список покупок."""
-
     list_display = (
         'pk',
         'user',

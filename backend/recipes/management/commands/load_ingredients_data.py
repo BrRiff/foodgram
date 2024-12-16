@@ -7,8 +7,6 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    help = 'Загрузка ингредиентов в базу данных'
-
     def handle(self, *args, **kwargs):
         with open(
             f'{CSV_FILES_DIR}/ingredients.csv', encoding='utf-8'

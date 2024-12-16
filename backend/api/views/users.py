@@ -16,8 +16,6 @@ from ..serializers.users import (
 
 
 class CustomUserViewSet(UserViewSet):
-    """Вьюсет для создания обьектов класса User."""
-
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = (AnonimOrAuthenticatedReadOnly,)
@@ -30,8 +28,6 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def get_me(self, request):
-        """Позволяет пользователю получить подробную информацию о себе
-        и редактировать её."""
         if request.method == 'PATCH':
             serializer = CustomUserSerializer(
                 request.user, data=request.data,
@@ -53,8 +49,6 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def get_subscribe(self, request, id):
-        """Позволяет текущему пользователю подписываться/отписываться от
-        от автора контента, чей профиль он просматривает."""
         author = get_object_or_404(User, id=id)
         if request.method == 'POST':
             serializer = SubscriptionSerializer(
@@ -82,8 +76,6 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def get_subscriptions(self, request):
-        """Возвращает авторов контента, на которых подписан
-        текущий пользователь.."""
         authors = User.objects.filter(author__subscriber=request.user)
         paginator = PageNumberPagination()
         result_pages = paginator.paginate_queryset(
