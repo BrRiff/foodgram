@@ -42,10 +42,6 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -92,9 +88,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -138,7 +134,3 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }
-
-LENGTH_TEXT = 15
-LIST_PER_PAGE = 10
-RECIPES_LIMIT = 2

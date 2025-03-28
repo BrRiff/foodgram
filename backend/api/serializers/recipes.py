@@ -4,12 +4,11 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (
-    Favorite,
+    Tag,
     Ingredient,
-    IngredientAmount,
-    Recipe,
-    ShoppingCart,
-    Tag
+    Recipes,
+    Saved,
+    Cart,
 )
 
 from .users import CustomUserSerializer
@@ -29,31 +28,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IngredientAmountSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-
-    class Meta:
-        model = IngredientAmount
-        fields = ('id', 'amount')
-
-
-class IngredientFullSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source="ingredient.id")
-    name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit'
-    )
-
-    class Meta:
-        model = IngredientAmount
-        fields = (
-            'id',
-            'name',
-            'measurement_unit',
-            'amount'
-        )
-
-
 class RecipeGETSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
@@ -62,7 +36,7 @@ class RecipeGETSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = Recipe
+        model = Recipes
         fields = (
             'id',
             'tags',
