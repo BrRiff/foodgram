@@ -128,7 +128,7 @@ class Cart(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Корзина пользователя'
+        verbose_name = 'корзина пользователя'
         ordering = ('user',)
 
     def __str__(self):
