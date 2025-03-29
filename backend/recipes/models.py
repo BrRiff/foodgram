@@ -91,6 +91,35 @@ class Recipes(models.Model):
         return self.name[:20]
 
 
+class IngredientAmount(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        verbose_name='ингредиент'
+    )
+    recipe = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE,
+        verbose_name='рецепт'
+    )
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='количество',
+    )
+
+    class Meta:
+        verbose_name = 'количество ингредиентов в рецепте'
+        ordering = ('id',)
+        constraints = (
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient'
+            ),
+        )
+
+    def __str__(self):
+        return f'{self.recipe} содержит ингредиент/ты {self.ingredient}'
+
+
 class Saved(models.Model):
     recipe = models.ForeignKey(
         Recipes,

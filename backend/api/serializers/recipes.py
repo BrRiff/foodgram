@@ -1,3 +1,4 @@
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (
@@ -5,6 +6,7 @@ from recipes.models import (
     Ingredient,
     Recipes,
     Saved,
+    IngredientAmount,
     Cart,
 )
 
@@ -58,6 +60,33 @@ class RecipeGETSerializer(serializers.ModelSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return request.user.shopping_cart.filter(recipe=object).exists()
+
+
+class IngredientAmountSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+
+    class Meta:
+        model = IngredientAmount
+        fields = ('id', 'amount')
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    ingredients = IngredientAmountSerializer(many=True)
+    image = Base64ImageField(use_url=True, max_length=None)
+    author = CustomUserSerializer(read_only=True)
+
+    class Meta:
+        model = Recipes
+        fields = (
+            'id',
+            'ingredients',
+            'tags',
+            'image',
+            'name',
+            'text',
+            'cooking_time',
+            'author'
+        )
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
