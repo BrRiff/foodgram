@@ -31,7 +31,6 @@ class RecipeAdmin(admin.ModelAdmin):
         'image',
         'pub_date',
         'cooking_time',
-        'amount_of_saved',
     )
 
     list_editable = ('author',)
@@ -39,10 +38,10 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('author', 'name')
     list_per_page = 5
 
-    def count_favorite(self, object):
+    def amount_of_saved(self, object):
         return object.favoriting.count()
 
-    count_favorite.short_description = 'Сохранненые рецепты'
+    amount_of_saved.short_description = 'Сохранненые рецепты'
 
     def get_ingredients(self, object):
         return (

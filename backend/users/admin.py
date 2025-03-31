@@ -9,13 +9,10 @@ class UserAdmin(admin.ModelAdmin):
         'pk',
         'username',
         'email',
-        'admin'
         'first_name',
-        'last_name',
-        'password',
     )
     list_filter = ('username', 'email')
-    list_editable = ('admin',)
+    list_editable = ('first_name',)
     list_page = 15
     empty_value = 'значения нет'
     search_fields = ('username',)
