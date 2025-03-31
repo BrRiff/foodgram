@@ -124,13 +124,13 @@ class Saved(models.Model):
     recipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='favoriting',
+        related_name='saved',
         verbose_name='сохранненое'
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favoriting',
+        related_name='user',
         verbose_name='пользователь'
     )
 
