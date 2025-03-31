@@ -25,7 +25,7 @@ class User(AbstractUser):
         max_length=64,
         verbose_name='пароль'
     )
-    admin = models.BooleanField(
+    is_admin = models.BooleanField(
         verbose_name='администратор',
         default=False
     )
