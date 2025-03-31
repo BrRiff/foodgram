@@ -27,20 +27,6 @@ class CustomUserViewSet(UserViewSet):
         url_name='me',
         permission_classes=(permissions.IsAuthenticated,)
     )
-    def get_me(self, request):
-        if request.method == 'PATCH':
-            serializer = CustomUserSerializer(
-                request.user, data=request.data,
-                partial=True, context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = CustomUserSerializer(
-            request.user, context={'request': request}
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     @action(
         detail=True,
         methods=['post', 'delete'],
