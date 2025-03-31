@@ -33,7 +33,6 @@ class User(AbstractUser):
         'username',
         'first_name',
         'last_name',
-        'password'
     )
     USERNAME_FIELD = 'email'
 
@@ -49,13 +48,13 @@ class Subscription(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='author',
+        related_name='authors',
         verbose_name='автор'
     )
     subscriber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriber',
+        related_name='subscribers',
         verbose_name='подписчик'
     )
 
@@ -64,7 +63,7 @@ class Subscription(models.Model):
         ordering = ('id',)
         constraints = (
             models.UniqueConstraint(
-                fields=['author', 'subscriber'],
+                fields=['authors', 'subscribers'],
                 name='unique_subscription'
             ),
         )
