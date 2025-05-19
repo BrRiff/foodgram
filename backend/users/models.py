@@ -4,25 +4,25 @@ from django.db import models
 
 class User(AbstractUser):
     email = models.EmailField(
-        max_length=128,
+        max_length=150,
         verbose_name='email',
         unique=True,
     )
     username = models.CharField(
-        max_length=64,
+        max_length=150,
         verbose_name='имя пользователя',
         unique=True,
     )
     first_name = models.CharField(
-        max_length=64,
+        max_length=150,
         verbose_name='имя'
     )
     last_name = models.CharField(
-        max_length=64,
+        max_length=150,
         verbose_name='фамилия'
     )
     password = models.CharField(
-        max_length=64,
+        max_length=150,
         verbose_name='пароль'
     )
     is_admin = models.BooleanField(
