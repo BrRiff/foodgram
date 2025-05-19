@@ -30,7 +30,7 @@ class CustomUserSerializer(UserSerializer):
             'username',
             'first_name',
             'last_name',
-            'subscriber'
+            'is_subscribed'
         )
 
     def get_subscriber(self, object):
@@ -78,7 +78,7 @@ class SubscriptionShowSerializer(CustomUserSerializer):
             'username',
             'first_name',
             'last_name',
-            'subscriber',
+            'is_subscribed',
             'recipes',
             'recipes_count'
         )
