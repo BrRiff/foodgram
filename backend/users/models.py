@@ -48,13 +48,13 @@ class Subscription(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='author',
+        related_name='authors',
         verbose_name='автор'
     )
     subscriber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriber',
+        related_name='subscribers',
         verbose_name='подписчик'
     )
 
@@ -63,7 +63,7 @@ class Subscription(models.Model):
         ordering = ('id',)
         constraints = (
             models.UniqueConstraint(
-                fields=['authors', 'subscribers'],
+                fields=['author', 'subscriber'],
                 name='unique_subscription'
             ),
         )
