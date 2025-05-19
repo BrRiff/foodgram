@@ -11,14 +11,19 @@ from ..permissions import AnonimOrAuthenticatedReadOnly
 from ..serializers.users import (
     CustomUserSerializer,
     SubscriptionSerializer,
-    SubscriptionShowSerializer
+    SubscriptionShowSerializer,
+    CustomUserCreateSerializer
 )
 
 
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
     permission_classes = (AnonimOrAuthenticatedReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CustomUserCreateSerializer
+        return CustomUserSerializer
 
     @action(
         detail=False,
