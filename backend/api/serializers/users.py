@@ -1,7 +1,9 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.models import Recipes
+from backend.settings import RECIPES_LIMIT
+from recipes.models import Recipe
 from users.models import Subscription, User
 
 
@@ -17,6 +19,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'last_name',
             'password'
         )
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class CustomUserSerializer(UserSerializer):
@@ -33,7 +36,7 @@ class CustomUserSerializer(UserSerializer):
             'is_subscribed'
         )
 
-    def get_subscriber(self, object):
+    def get_is_subscribed(self, object):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -45,11 +48,18 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = '__all__'
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=('author', 'subscriber'),
+                message='Вы уже подписаны.'
+            )
+        ]
 
     def validate(self, data):
         if data['subscriber'] == data['author']:
             raise serializers.ValidationError(
-                'Вы не можете оформить подписку на самого себя.'
+                'Нельзя подписаться на самого себя.'
             )
         return data
 
@@ -57,7 +67,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class SubscriptionRecipeShortSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = (
             'id',
             'name',
@@ -84,7 +94,7 @@ class SubscriptionShowSerializer(CustomUserSerializer):
         )
 
     def get_recipes(self, object):
-        author_recipes = object.recipes.all()[:5]
+        author_recipes = object.recipes.all()[:RECIPES_LIMIT]
         return SubscriptionRecipeShortSerializer(
             author_recipes, many=True
         ).data

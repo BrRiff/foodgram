@@ -134,3 +134,7 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }
+
+LENGTH_TEXT = 15
+LIST_PER_PAGE = 10
+RECIPES_LIMIT = 2

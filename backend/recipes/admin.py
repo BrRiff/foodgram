@@ -1,10 +1,13 @@
 from django.contrib import admin
 
+from backend.settings import LIST_PER_PAGE
+
 from .models import (
-    Saved,
+    Favorite,
     Ingredient,
-    Recipes,
-    Cart,
+    IngredientAmount,
+    Recipe,
+    ShoppingCart,
     Tag
 )
 
@@ -14,41 +17,14 @@ class TagAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'name',
+        'color',
         'slug'
     )
+    empty_value_display = 'значение отсутствует'
     list_filter = ('name',)
+    list_per_page = LIST_PER_PAGE
     search_fields = ('name',)
-    list_per_page = 5
-
-
-@admin.register(Recipes)
-class RecipeAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'name',
-        'author',
-        'text',
-        'image',
-        'pub_date',
-        'cooking_time',
-    )
-
-    list_editable = ('author',)
-    list_filter = ('author', 'name', 'tags')
-    search_fields = ('author', 'name')
-    list_per_page = 5
-
-    def amount_of_saved(self, object):
-        return object.favoriting.count()
-
-    amount_of_saved.short_description = 'Сохранненые рецепты'
-
-    def get_ingredients(self, object):
-        return (
-            ingredient.name for ingredient in object.ingredients.all()
-        )
-
-    get_ingredients.short_description = 'ингредиенты'
+    prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Ingredient)
@@ -58,34 +34,93 @@ class IngredientAdmin(admin.ModelAdmin):
         'name',
         'measurement_unit'
     )
+    empty_value_display = 'значение отсутствует'
     list_filter = ('name',)
+    list_per_page = LIST_PER_PAGE
     search_fields = ('name',)
-    list_per_page = 5
 
 
-@admin.register(Cart)
-class ShoppingCartAdmin(admin.ModelAdmin):
+class IngredientAmountInline(admin.TabularInline):
+    model = IngredientAmount
+    min_num = 1
+
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'user',
-        'recipe',
+        'name',
+        'author',
+        'text',
+        'get_tags',
+        'get_ingredients',
+        'cooking_time',
+        'image',
+        'pub_date',
+        'count_favorite',
     )
+    inlines = [
+        IngredientAmountInline,
+    ]
+    empty_value_display = 'значение отсутствует'
+    list_editable = ('author',)
+    list_filter = ('author', 'name', 'tags')
+    list_per_page = LIST_PER_PAGE
+    search_fields = ('author', 'name')
 
-    list_editable = ('user', 'recipe')
-    list_filter = ('user',)
-    search_fields = ('user',)
-    list_per_page = 5
+    def get_ingredients(self, object):
+        return '\n'.join(
+            (ingredient.name for ingredient in object.ingredients.all())
+        )
+
+    get_ingredients.short_description = 'ингредиенты'
+
+    def get_tags(self, object):
+        return '\n'.join((tag.name for tag in object.tags.all()))
+
+    get_tags.short_description = 'теги'
+
+    def count_favorite(self, object):
+        return object.favoriting.count()
+
+    count_favorite.short_description = 'Количество добавлений в избранное'
 
 
-@admin.register(Saved)
+@admin.register(IngredientAmount)
+class IngredientAmountAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'ingredient',
+        'amount',
+        'recipe'
+    )
+    empty_value_display = 'значение отсутствует'
+    list_per_page = LIST_PER_PAGE
+
+
+@admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'user',
         'recipe',
     )
-
+    empty_value_display = 'значение отсутствует'
     list_editable = ('user', 'recipe')
     list_filter = ('user',)
     search_fields = ('user',)
-    list_per_page = 5
+    list_per_page = LIST_PER_PAGE
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'user',
+        'recipe',
+    )
+    empty_value_display = 'значение отсутствует'
+    list_editable = ('user', 'recipe')
+    list_filter = ('user',)
+    search_fields = ('user',)
+    list_per_page = LIST_PER_PAGE
