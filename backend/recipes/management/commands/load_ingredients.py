@@ -1,19 +1,23 @@
-import os
-import json
+import csv
+
 from django.core.management.base import BaseCommand
-from recipes.models import Ingredient  # замените на вашу модель
+
+from backend.settings import CSV_FILES_DIR
+from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    help = 'Load ingredients from JSON file'
-
     def handle(self, *args, **kwargs):
-        path = os.path.join(
-            'data', 'ingredients.json'
-        )
-        with open(path, encoding='utf-8') as f:
-            data = json.load(f)
-
-        for item in data:
-            Ingredient.objects.create(**item)
-            self.stdout.write(self.style.SUCCESS(f"Added {item}"))
+        with open(
+            f'{CSV_FILES_DIR}/ingredients.csv', encoding='utf-8'
+        ) as file:
+            reader = csv.reader(file)
+            next(reader)
+            ingredients = [
+                Ingredient(
+                    name=row[0],
+                    measurement_unit=row[1],
+                )
+                for row in reader
+            ]
+            Ingredient.objects.bulk_create(ingredients)
