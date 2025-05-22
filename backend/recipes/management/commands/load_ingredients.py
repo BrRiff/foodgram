@@ -1,6 +1,6 @@
 import json
 from django.core.management.base import BaseCommand
-from models import Ingredient  # замените на своё
+from recipes.models import Ingredient  # замените на своё
 
 
 class Command(BaseCommand):
