@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         path = os.path.join(
-            settings.BASE_DIR, 'backend', 'data', 'ingredients.json'
+            settings.BASE_DIR, 'data', 'ingredients.json'
         )
         with open(path, encoding='utf-8') as f:
             data = json.load(f)
