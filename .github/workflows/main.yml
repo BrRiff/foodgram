@@ -48,6 +48,7 @@ jobs:
           context: ./backend/
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+          no-cache: true
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v3
@@ -55,6 +56,7 @@ jobs:
           context: ./frontend/
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+          no-cache: true
 
   remote_deployment:
     runs-on: ubuntu-latest
