@@ -20,7 +20,7 @@ const About = ({ updateOrders, orders }) => {
                 <strong>Foodgram</strong> — это онлайн-платформа для публикации и хранения кулинарных рецептов. Вы можете создавать собственные рецепты, просматривать рецепты других пользователей, добавлять их в избранное и формировать список покупок.
               </p>
               <p className={styles.textItem}>
-                Проект разработан в рамках финального спринта обучения на курсе Яндекс Практикума по направлению «Python-разработчик». Он сочетает в себе полный стек современных технологий: Django, PostgreSQL, Docker, GitHub Actions и React.
+                Проект разработан в рамках финального спринта обучения на курсе Яндекс Практикума по направлению «Python-разработчик». Он сочетает в себе полный стек современных технологий: Django, PostgreSQL, Docker, GitHub Actions.
               </p>
               <p className={styles.textItem}>
                 Пользователи могут регистрироваться, подписываться друг на друга, сохранять рецепты, а также быстро получать список необходимых ингредиентов для выбранных блюд.
@@ -36,10 +36,10 @@ const About = ({ updateOrders, orders }) => {
             </h2>
             <div className={styles.text}>
               <p className={styles.textItem}>
-                Репозиторий проекта — <a href="#" className={styles.textLink}>GitHub</a>
+                Репозиторий проекта — <a href="https://github.com/BrRiff/foodgram" className={styles.textLink}>GitHub</a>
               </p>
               <p className={styles.textItem}>
-                Автор проекта — <a href="#" className={styles.textLink}>Имя Автора</a>
+                Автор проекта — <a href="https://www.linkedin.com/in/ruslan-bryukhanov-741a41275/" className={styles.textLink}>Руслан Брюханов</a>
               </p>
             </div>
           </aside>
