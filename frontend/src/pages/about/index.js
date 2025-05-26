@@ -12,41 +12,39 @@ const About = ({ updateOrders, orders }) => {
     </MetaTags>
     
     <Container>
-      <h1 className={styles.title}>Привет!</h1>
       <div className={styles.content}>
-        <div>
-          <h2 className={styles.subtitle}>Что это за сайт?</h2>
-          <div className={styles.text}>
-            <p className={styles.textItem}>
-              Представляю вам проект, созданный во время обучения в Яндекс Практикуме. Этот проект — часть учебного курса, но он создан полностью самостоятельно.
-            </p>
-            <p className={styles.textItem}>
-              Цель этого сайта — дать возможность пользователям создавать и хранить рецепты на онлайн-платформе. Кроме того, можно скачать список продуктов, необходимых для
-              приготовления блюда, просмотреть рецепты друзей и добавить любимые рецепты в список избранных.
-            </p>
-            <p className={styles.textItem}>
-              Чтобы использовать все возможности сайта — нужна регистрация. Проверка адреса электронной почты не осуществляется, вы можете ввести любой email. 
-            </p>
-            <p className={styles.textItem}>
-              Заходите и делитесь своими любимыми рецептами!
-            </p>
+          <div>
+            <h2 className={styles.subtitle}>Что такое Foodgram?</h2>
+            <div className={styles.text}>
+              <p className={styles.textItem}>
+                <strong>Foodgram</strong> — это онлайн-платформа для публикации и хранения кулинарных рецептов. Вы можете создавать собственные рецепты, просматривать рецепты других пользователей, добавлять их в избранное и формировать список покупок.
+              </p>
+              <p className={styles.textItem}>
+                Проект разработан в рамках финального спринта обучения на курсе Яндекс Практикума по направлению «Python-разработчик». Он сочетает в себе полный стек современных технологий: Django, PostgreSQL, Docker, GitHub Actions и React.
+              </p>
+              <p className={styles.textItem}>
+                Пользователи могут регистрироваться, подписываться друг на друга, сохранять рецепты, а также быстро получать список необходимых ингредиентов для выбранных блюд.
+              </p>
+              <p className={styles.textItem}>
+                Основная цель — сделать платформу удобной для обмена идеями и планирования покупок. Все просто и понятно, даже если вы заходите сюда впервые.
+              </p>
+            </div>
           </div>
+          <aside>
+            <h2 className={styles.additionalTitle}>
+              Ссылки
+            </h2>
+            <div className={styles.text}>
+              <p className={styles.textItem}>
+                Репозиторий проекта — <a href="#" className={styles.textLink}>GitHub</a>
+              </p>
+              <p className={styles.textItem}>
+                Автор проекта — <a href="#" className={styles.textLink}>Имя Автора</a>
+              </p>
+            </div>
+          </aside>
         </div>
-        <aside>
-          <h2 className={styles.additionalTitle}>
-            Ссылки
-          </h2>
-          <div className={styles.text}>
-            <p className={styles.textItem}>
-              Код проекта находится тут - <a href="#" className={styles.textLink}>Github</a>
-            </p>
-            <p className={styles.textItem}>
-              Автор проекта: <a href="#" className={styles.textLink}>Имя Автора</a>
-            </p>
-          </div>
-        </aside>
-      </div>
-      
+
     </Container>
   </Main>
 }

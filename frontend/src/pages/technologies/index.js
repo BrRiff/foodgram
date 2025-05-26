@@ -12,25 +12,27 @@ const Technologies = () => {
     </MetaTags>
     
     <Container>
-      <h1 className={styles.title}>Технологии</h1>
-      <div className={styles.content}>
+    <div className={styles.content}>
         <div>
-          <h2 className={styles.subtitle}>Технологии, которые применены в этом проекте:</h2>
+          <h2 className={styles.subtitle}>Технологии, использованные в проекте</h2>
           <div className={styles.text}>
+            <p className={styles.textItem}>
+              В разработке Foodgram использован современный стек технологий, позволяющий реализовать полноценный веб-сервис:
+            </p>
             <ul className={styles.textItem}>
-              <li className={styles.textItem}>
-                Python
-              </li>
-              <li className={styles.textItem}>
-                Django
-              </li>
-              <li className={styles.textItem}>
-                Django REST Framework
-              </li>
-              <li className={styles.textItem}>
-                Djoser
-              </li>
+              <li><strong>Python</strong> — основной язык разработки бэкенда.</li>
+              <li><strong>Django</strong> — фреймворк, обеспечивающий быструю и безопасную разработку веб-приложений.</li>
+              <li><strong>Django REST Framework</strong> — создание REST API для взаимодействия с фронтендом и внешними сервисами.</li>
+              <li><strong>Djoser</strong> — готовое решение для регистрации, авторизации и управления пользователями через API.</li>
+              <li><strong>PostgreSQL</strong> — реляционная СУБД для хранения данных.</li>
+              <li><strong>Docker</strong> — контейнеризация приложения, упрощающая развёртывание и масштабирование.</li>
+              <li><strong>GitHub Actions</strong> — CI/CD: автоматическое тестирование, сборка и деплой после каждого пуша в main.</li>
+              <li><strong>Nginx</strong> — веб-сервер и обратный прокси, обеспечивающий стабильную работу фронтенда и API.</li>
+              <li><strong>React</strong> — библиотека для построения пользовательского интерфейса на стороне клиента.</li>
             </ul>
+            <p className={styles.textItem}>
+              Такой подход обеспечивает модульность, масштабируемость и высокую стабильность работы проекта.
+            </p>
           </div>
         </div>
       </div>
