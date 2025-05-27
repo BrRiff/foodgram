@@ -1,52 +1,37 @@
 import io
+import os
 
 from django.http import HttpResponse
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Paragraph,
-    Spacer, Table,
-    TableStyle
-)
+from django.conf import settings
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 
 def create_shopping_cart(ingredients_cart):
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4)
-    elements = []
+    pdf_file = canvas.Canvas(buffer)
 
-    styles = getSampleStyleSheet()
-    title = Paragraph("Список покупок", styles["Title"])
-    elements.append(title)
-    elements.append(Spacer(1, 12))
+    font_path = os.path.join(settings.BASE_DIR, 'recipes', 'fonts', 'DejaVuSans.ttf')
+    pdfmetrics.registerFont(TTFont('DejaVuSans', font_path))
 
-    data = [["№", "Ингредиент", "Количество", "Ед. измерения"]]
-    for i, item in enumerate(ingredients_cart, start=1):
-        data.append([
-            str(i),
-            item["ingredient__name"],
-            str(item["ingredient_value"]),
-            item["ingredient__measurement_unit"],
-        ])
+    pdf_file.setFont('DejaVuSans', 24)
+    pdf_file.drawString(200, 800, 'Список покупок')
 
-    table = Table(data, colWidths=[30, 200, 100, 100])
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-    ]))
+    pdf_file.setFont('DejaVuSans', 14)
+    y_position = 750
+    for idx, item in enumerate(ingredients_cart, start=1):
+        line = f"{idx}. {item['ingredient__name']} — {item['ingredient_value']} {item['ingredient__measurement_unit']}"
+        pdf_file.drawString(50, y_position, line)
+        y_position -= 20
+        if y_position <= 50:
+            pdf_file.showPage()
+            pdf_file.setFont('DejaVuSans', 14)
+            y_position = 800
 
-    elements.append(table)
-    doc.build(elements)
-
+    pdf_file.save()
     buffer.seek(0)
-    response = HttpResponse(buffer.read(), content_type="application/pdf")
-    response["Content-Disposition"] = (
-        'attachment; filename="shopping_cart.pdf"'
-    )
-    buffer.close()
+
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="shopping_cart.pdf"'
     return response
