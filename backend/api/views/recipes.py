@@ -4,7 +4,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
- 
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -26,6 +28,15 @@ from ..serializers.recipes import (
     TagSerializer
 )
 from ..utils import create_shopping_cart
+
+
+class UserAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.avatar.delete(save=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
