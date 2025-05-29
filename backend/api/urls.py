@@ -2,17 +2,17 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views.recipes import (
-    IngredientViewSet,
-    RecipeViewSet,
-    TagViewSet,
+    IngredientReadOnlyView,
+    RecipeManagerView,
+    TagReadOnlyView,
 )
 from .views.users import CustomUserViewSet
 
 router = routers.DefaultRouter()
 router.register('users', CustomUserViewSet, basename='users')
-router.register('tags', TagViewSet, basename='tags')
-router.register('ingredients', IngredientViewSet, basename='ingredients')
-router.register('recipes', RecipeViewSet, basename='recipes')
+router.register('tags', TagReadOnlyView, basename='tags')
+router.register('ingredients', IngredientReadOnlyView, basename='ingredients')
+router.register('recipes', RecipeManagerView, basename='recipes')
 
 
 urlpatterns = [
