@@ -12,32 +12,44 @@ from .models import (
 )
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'name',
-        'color',
-        'slug'
+        'user',
+        'recipe',
     )
     empty_value_display = 'значение отсутствует'
-    list_filter = ('name',)
+    list_editable = ('user', 'recipe')
+    list_filter = ('user',)
+    search_fields = ('user',)
     list_per_page = LIST_PER_PAGE
-    search_fields = ('name',)
-    prepopulated_fields = {'slug': ('name',)}
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'name',
-        'measurement_unit'
+        'user',
+        'recipe',
     )
     empty_value_display = 'значение отсутствует'
-    list_filter = ('name',)
+    list_editable = ('user', 'recipe')
+    list_filter = ('user',)
+    search_fields = ('user',)
     list_per_page = LIST_PER_PAGE
-    search_fields = ('name',)
+
+
+@admin.register(IngredientAmount)
+class IngredientAmountAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'ingredient',
+        'amount',
+        'recipe'
+    )
+    empty_value_display = 'значение отсутствует'
+    list_per_page = LIST_PER_PAGE
 
 
 class IngredientAmountInline(admin.TabularInline):
@@ -86,41 +98,29 @@ class RecipeAdmin(admin.ModelAdmin):
     count_favorite.short_description = 'Количество добавлений в избранное'
 
 
-@admin.register(IngredientAmount)
-class IngredientAmountAdmin(admin.ModelAdmin):
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'ingredient',
-        'amount',
-        'recipe'
+        'name',
+        'measurement_unit'
     )
     empty_value_display = 'значение отсутствует'
+    list_filter = ('name',)
     list_per_page = LIST_PER_PAGE
+    search_fields = ('name',)
 
 
-@admin.register(Favorite)
-class FavoriteAdmin(admin.ModelAdmin):
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'user',
-        'recipe',
+        'name',
+        'color',
+        'slug'
     )
     empty_value_display = 'значение отсутствует'
-    list_editable = ('user', 'recipe')
-    list_filter = ('user',)
-    search_fields = ('user',)
+    list_filter = ('name',)
     list_per_page = LIST_PER_PAGE
-
-
-@admin.register(ShoppingCart)
-class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'user',
-        'recipe',
-    )
-    empty_value_display = 'значение отсутствует'
-    list_editable = ('user', 'recipe')
-    list_filter = ('user',)
-    search_fields = ('user',)
-    list_per_page = LIST_PER_PAGE
+    search_fields = ('name',)
+    prepopulated_fields = {'slug': ('name',)}

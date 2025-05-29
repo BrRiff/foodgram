@@ -4,8 +4,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 
 from recipes.models import (
     Favorite,
@@ -19,123 +17,99 @@ from recipes.models import (
 from ..filters import IngredientSearchFilter, RecipeFilter
 from ..permissions import AuthorOrReadOnly
 from ..serializers.recipes import (
-    FavoriteSerializer,
-    IngredientSerializer,
-    RecipeGETSerializer,
-    RecipeSerializer,
-    RecipeShortSerializer,
-    ShoppingCartSerializer,
-    TagSerializer
+    FavoriteRecipeSerializer,
+    IngredientInfoSerializer,
+    ReadRecipeSerializer,
+    WriteRecipeSerializer,
+    ShortRecipeSerializer,
+    ShoppingCartEntrySerializer,
+    TagInfoSerializer
 )
 from ..utils import create_shopping_cart
 
 
-class UserAvatarView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request):
-        user = request.user
-        user.avatar.delete(save=True)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
+class TagReadOnlyView(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    serializer_class = TagInfoSerializer
     permission_classes = (permissions.AllowAny,)
     pagination_class = None
 
 
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+class IngredientReadOnlyView(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
+    serializer_class = IngredientInfoSerializer
     permission_classes = (permissions.AllowAny,)
     pagination_class = None
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientSearchFilter
-    search_fields = ('^name', )
+    search_fields = ('^name',)
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
+class RecipeManagerView(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-    permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly, AuthorOrReadOnly
-    )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, AuthorOrReadOnly)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    @action(
-        detail=True,
-        methods=['post', 'delete'],
-        url_path='favorite',
-        url_name='favorite',
-        permission_classes=(permissions.IsAuthenticated,)
-    )
-    def get_favorite(self, request, pk):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == 'POST':
-            serializer = FavoriteSerializer(
-                data={'user': request.user.id, 'recipe': recipe.id}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            favorite_serializer = RecipeShortSerializer(recipe)
-            return Response(
-                favorite_serializer.data, status=status.HTTP_201_CREATED
-            )
-        favorite_recipe = get_object_or_404(
-            Favorite, user=request.user, recipe=recipe
-        )
-        favorite_recipe.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ReadRecipeSerializer
+        return WriteRecipeSerializer
 
     @action(
         detail=True,
         methods=['post', 'delete'],
-        url_path='shopping_cart',
-        url_name='shopping_cart',
-        permission_classes=(permissions.IsAuthenticated,)
+        permission_classes=(permissions.IsAuthenticated,),
+        url_path='favorite'
     )
-    def get_shopping_cart(self, request, pk):
+    def manage_favorite(self, request, pk):
+        return self._handle_custom_action(
+            request=request,
+            pk=pk,
+            model=Favorite,
+            serializer_class=FavoriteRecipeSerializer
+        )
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=(permissions.IsAuthenticated,),
+        url_path='shopping_cart'
+    )
+    def manage_shopping_cart(self, request, pk):
+        return self._handle_custom_action(
+            request=request,
+            pk=pk,
+            model=ShoppingCart,
+            serializer_class=ShoppingCartEntrySerializer
+        )
+
+    def _handle_custom_action(self, request, pk, model, serializer_class):
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
-            serializer = ShoppingCartSerializer(
+            serializer = serializer_class(
                 data={'user': request.user.id, 'recipe': recipe.id}
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            shopping_cart_serializer = RecipeShortSerializer(recipe)
-            return Response(
-                shopping_cart_serializer.data, status=status.HTTP_201_CREATED
-            )
-        shopping_cart_recipe = get_object_or_404(
-            ShoppingCart, user=request.user, recipe=recipe
-        )
-        shopping_cart_recipe.delete()
+            return Response(ShortRecipeSerializer(recipe).data, status=status.HTTP_201_CREATED)
+
+        instance = get_object_or_404(model, user=request.user, recipe=recipe)
+        instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,
         methods=['get'],
-        url_path='download_shopping_cart',
-        url_name='download_shopping_cart',
-        permission_classes=(permissions.IsAuthenticated,)
+        permission_classes=(permissions.IsAuthenticated,),
+        url_path='download_shopping_cart'
     )
-    def download_shopping_cart(self, request):
-        ingredients_cart = (
-            IngredientAmount.objects.filter(
-                recipe__shopping_cart__user=request.user
-            ).values(
-                'ingredient__name',
-                'ingredient__measurement_unit',
-            ).order_by(
-                'ingredient__name'
-            ).annotate(ingredient_value=Sum('amount'))
+    def download_cart(self, request):
+        aggregated_ingredients = (
+            IngredientAmount.objects
+            .filter(recipe__shopping_cart__user=request.user)
+            .values('ingredient__name', 'ingredient__measurement_unit')
+            .annotate(ingredient_value=Sum('amount'))
+            .order_by('ingredient__name')
         )
-        return create_shopping_cart(ingredients_cart)
-
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return RecipeGETSerializer
-        return RecipeSerializer
+        return create_shopping_cart(aggregated_ingredients)

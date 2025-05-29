@@ -9,59 +9,56 @@ from users.models import Subscription, User
 
 from ..permissions import AnonimOrAuthenticatedReadOnly
 from ..serializers.users import (
-    CustomUserSerializer,
-    SubscriptionSerializer,
-    SubscriptionShowSerializer
+    PublicUserSerializer,
+    SubscriptionActionSerializer,
+    SubscribedUserDetailSerializer
 )
 
 
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
+    serializer_class = PublicUserSerializer
     permission_classes = (AnonimOrAuthenticatedReadOnly,)
 
     @action(
         detail=False,
         methods=['get', 'patch'],
-        url_path='me',
-        url_name='me',
-        permission_classes=(permissions.IsAuthenticated,)
+        permission_classes=(permissions.IsAuthenticated,),
+        url_path='me'
     )
-    def get_me(self, request):
+    def manage_me(self, request):
         if request.method == 'PATCH':
-            serializer = CustomUserSerializer(
+            serializer = PublicUserSerializer(
                 request.user, data=request.data,
                 partial=True, context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = CustomUserSerializer(
+            return Response(serializer.data)
+        serializer = PublicUserSerializer(
             request.user, context={'request': request}
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
     @action(
         detail=True,
         methods=['post', 'delete'],
-        url_path='subscribe',
-        url_name='subscribe',
-        permission_classes=(permissions.IsAuthenticated,)
+        permission_classes=(permissions.IsAuthenticated,),
+        url_path='subscribe'
     )
-    def get_subscribe(self, request, id):
+    def manage_subscription(self, request, id=None):
         author = get_object_or_404(User, id=id)
         if request.method == 'POST':
-            serializer = SubscriptionSerializer(
+            serializer = SubscriptionActionSerializer(
                 data={'subscriber': request.user.id, 'author': author.id}
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            author_serializer = SubscriptionShowSerializer(
+            response_serializer = SubscribedUserDetailSerializer(
                 author, context={'request': request}
             )
-            return Response(
-                author_serializer.data, status=status.HTTP_201_CREATED
-            )
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
         subscription = get_object_or_404(
             Subscription, subscriber=request.user, author=author
         )
@@ -71,17 +68,14 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=False,
         methods=['get'],
-        url_path='subscriptions',
-        url_name='subscriptions',
-        permission_classes=(permissions.IsAuthenticated,)
+        permission_classes=(permissions.IsAuthenticated,),
+        url_path='subscriptions'
     )
-    def get_subscriptions(self, request):
+    def list_subscriptions(self, request):
         authors = User.objects.filter(author__subscriber=request.user)
         paginator = PageNumberPagination()
-        result_pages = paginator.paginate_queryset(
-            queryset=authors, request=request
-        )
-        serializer = SubscriptionShowSerializer(
-            result_pages, context={'request': request}, many=True
+        paginated_authors = paginator.paginate_queryset(authors, request)
+        serializer = SubscribedUserDetailSerializer(
+            paginated_authors, many=True, context={'request': request}
         )
         return paginator.get_paginated_response(serializer.data)

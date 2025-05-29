@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 from backend.settings import LIST_PER_PAGE
-
 from .models import Subscription, User
 
 
@@ -14,13 +13,13 @@ class UserAdmin(admin.ModelAdmin):
         'first_name',
         'last_name',
         'password',
-        'is_admin'
+        'is_admin',
     )
-    empty_value_display = 'значение отсутствует'
     list_editable = ('is_admin',)
     list_filter = ('username', 'email')
-    list_per_page = LIST_PER_PAGE
     search_fields = ('username',)
+    list_per_page = LIST_PER_PAGE
+    empty_value_display = 'значение отсутствует'
 
 
 @admin.register(Subscription)
@@ -32,8 +31,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
     )
     list_editable = ('author', 'subscriber')
     list_filter = ('author',)
-    list_per_page = LIST_PER_PAGE
     search_fields = ('author',)
+    list_per_page = LIST_PER_PAGE
 
 
 admin.site.site_title = 'Администрирование Foodgram'
