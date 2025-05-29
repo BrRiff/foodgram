@@ -11,7 +11,7 @@ from recipes.models import (
     Tag,
 )
 
-from .users import CustomUserSerializer
+from .users import PublicUserSerializer
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
@@ -54,7 +54,7 @@ class IngredientReadSerializer(serializers.ModelSerializer):
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
     tags = TagInfoSerializer(many=True, read_only=True)
-    author = CustomUserSerializer(read_only=True)
+    author = PublicUserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -90,7 +90,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
 class WriteRecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientWriteSerializer(many=True)
     image = Base64ImageField(use_url=True)
-    author = CustomUserSerializer(read_only=True)
+    author = PublicUserSerializer(read_only=True)
 
     class Meta:
         model = Recipe
